@@ -2,26 +2,25 @@ pipeline {
     agent any
 
     stages {
-        stage('Deploy') {
-    steps {
-        sh 'sudo cp -r * /var/www/html/'
-    }
-}
-        stage('Build') {
+        stage('Build React App') {
             steps {
-                sh 'echo "Build started..."'
+                sh 'npm install'
+                sh 'npm run build'
             }
         }
 
-        stage('Test') {
+        stage('Docker Build') {
             steps {
-                sh 'echo "Testing..."'
+                sh 'docker build -t my-react-app .'
             }
         }
 
-        stage('Deploy') {
+        stage('Docker Run') {
             steps {
-                sh 'echo "Deploying project..."'
+                sh '''
+                docker rm -f myapp || true
+                docker run -d -p 80:80 --name myapp my-react-app
+                '''
             }
         }
     }
