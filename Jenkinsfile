@@ -2,24 +2,24 @@ pipeline {
     agent any
 
     stages {
-        stage('Build React App') {
+        stage('Clone') {
             steps {
-                sh 'npm install'
-                sh 'npm run build'
+                git 'https://github.com/mdibrahim-ux/valyrian-craft-ci.git'
             }
         }
 
-        stage('Docker Build') {
+        stage('Build Docker Image') {
             steps {
-                sh 'docker build -t my-react-app .'
+                sh 'docker build -t valyrian-app:v1 .'
             }
         }
 
-        stage('Docker Run') {
+        stage('Deploy Container') {
             steps {
                 sh '''
-                docker rm -f myapp || true
-                docker run -d -p 80:80 --name myapp my-react-app
+                docker ps -q | xargs -r docker stop
+                docker ps -aq | xargs -r docker rm
+                docker run -d -p 80:3000 valyrian-app:v1
                 '''
             }
         }
