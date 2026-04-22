@@ -3,12 +3,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout SCM') {
-            steps {
-                git 'https://github.com/mdibrahim-ux/Valyrian-Craft.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t devops-demo:v1 .'
